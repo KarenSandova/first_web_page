@@ -21,7 +21,7 @@ def resource_path(ralative_path):
         return os.path.join(base_path, ralative_path)
     
 #cargar imagen de fondo 
-asset_background = resource_path("assets/images/background.png")
+asset_background = resource_path('assets/images/background.png')
 background = pygame.image.load(asset_background)
 
 #icono de ventana 
@@ -42,11 +42,11 @@ bulleting = pygame.image.load(asset_bulleting)
 
 #fuente para texto de game over 
 asset_over_font = resource_path("assets/fonts/RAVIE.TTF")
-over_font = pygame.font.Font(asset_over_font)
+over_font = pygame.font.Font(asset_over_font, 60)
 
 #puntaje
 asset_font = resource_path("assets/fonts/comicbd.ttf")
-font = pygame.font.Font(asset_font)
+font = pygame.font.Font(asset_font, 32)
 
 #ponemos titulo a nuestro juego 
 pygame.display.set_caption("Space Invader")
@@ -152,7 +152,7 @@ def gameloop():
     in_game = True
     while in_game:
         #maneja y limpia la pantall 
-        screen.fill(0,0,0)
+        screen.fill((0,0,0))
         screen.blit(background,(0,0))
         
         for event in pygame.event.get():
@@ -175,8 +175,8 @@ def gameloop():
                         bulletX = bulletX
                         fire_bullet(bulletX, bulletY)
                         
-                if event.type == pygame.KEYUP:
-                    playerx_change = 0
+            if event.type == pygame.KEYUP:
+                playerx_change = 0
                     
         #se actualiza la posicion del jugador 
         playerX += playerx_change
@@ -200,6 +200,29 @@ def gameloop():
             elif enemyX[i]>=736:
                 enemyX_change[i]=-5
                 enemyY_change[i] += enemyY_change[i]
-                                        
-                        
+
+        # comprobamos colisiones entre enemigo y bala 
+            collison = isCollision(enemyX[i], enemyY[i], bulletX, bulletY)
+            if  collison: 
+                 bulletY = 454
+                 bullet_state = "ready"
+                 score += 1
+                 enemyX [i] = random.randint(0,736)
+                 enemyY [i] = random.randint(0,150)
+            enemy(enemyX[i], enemyY[i],i)
+        if bulletY<0:
+            bulletY = 454
+            bullet_state = "ready"
+        if bullet_state =="fire":
+            fire_bullet(bulletX,bulletY)
+            bulletY -= bulletY_change
             
+        player(playerX, PlayerY)
+        show_score()
+        
+        pygame.display.update()
+        
+        clock.tick(120)
+        
+gameloop()
+ 
